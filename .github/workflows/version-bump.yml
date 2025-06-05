@@ -1,0 +1,69 @@
+name: Version Bump and Tag
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Bump patch version in metadata.txt
+        id: bump_version
+        run: |
+          import re
+          import sys
+
+          metadata_file = 'LADirectus2QGIS/metadata.txt'
+
+          with open(metadata_file, 'r', encoding='utf-8') as f:
+              lines = f.readlines()
+
+          version_re = re.compile(r'^(version\s*=\s*)(\d+)\.(\d+)\.(\d+)(.*)$')
+
+          new_lines = []
+          new_version = None
+
+          for line in lines:
+              m = version_re.match(line)
+              if m:
+                  major, minor, patch = int(m.group(2)), int(m.group(3)), int(m.group(4))
+                  patch += 1
+                  new_version = f"{major}.{minor}.{patch}"
+                  new_line = f"{m.group(1)}{new_version}{m.group(5)}\n"
+                  new_lines.append(new_line)
+              else:
+                  new_lines.append(line)
+
+          if new_version is None:
+              print("Version line not found in metadata.txt")
+              sys.exit(1)
+
+          with open(metadata_file, 'w', encoding='utf-8') as f:
+              f.writelines(new_lines)
+
+          print(f"::set-output name=new_version::{new_version}")
+
+      - name: Commit bumped version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add LADirectus2QGIS/metadata.txt
+          git commit -m "Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git push origin main
+
+      - name: Create Git tag
+        run: |
+          git tag v${{ steps.bump_version.outputs.new_version }}
+          git push origin v${{ steps.bump_version.outputs.new_version }}
