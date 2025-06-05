@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QGroupBox,
     QLabel, QLineEdit, QComboBox,
-    QListWidget, QListWidgetItem, QPushButton, QMessageBox
+    QListWidget, QListWidgetItem, QPushButton
 )
 from PyQt5.QtCore import Qt, QRegExp
 from PyQt5.QtGui import QRegExpValidator
@@ -31,7 +31,6 @@ class SettingsDialog(QDialog):
         url_label = QLabel("Directus API URL:")
         self.url_input = QLineEdit(self.url)
         self.url_input.setToolTip("Base URL of your Directus instance, e.g. https://mydirectus.example.com")
-        # URL validator (simple regex for http/https)
         url_regex = QRegExp(r"https?://.+")
         self.url_input.setValidator(QRegExpValidator(url_regex, self))
         url_layout.addWidget(url_label)
@@ -85,6 +84,14 @@ class SettingsDialog(QDialog):
         # Fields checklist label
         geom_fields_layout.addWidget(QLabel("Select fields to import:"))
 
+        # Select/Deselect buttons layout
+        select_buttons_layout = QHBoxLayout()
+        btn_select_all = QPushButton("Select All")
+        btn_deselect_all = QPushButton("Deselect All")
+        select_buttons_layout.addWidget(btn_select_all)
+        select_buttons_layout.addWidget(btn_deselect_all)
+        geom_fields_layout.addLayout(select_buttons_layout)
+
         # Fields checklist
         self.fields_list = QListWidget()
         geom_fields_layout.addWidget(self.fields_list)
@@ -120,6 +127,8 @@ class SettingsDialog(QDialog):
         btn_cancel.clicked.connect(self.reject)
         self.url_input.textChanged.connect(self.validate_inputs)
         self.collection_dropdown.currentTextChanged.connect(self.validate_inputs)
+        btn_select_all.clicked.connect(self.select_all_fields)
+        btn_deselect_all.clicked.connect(self.deselect_all_fields)
 
         # Initial population
         if self.url:
@@ -133,10 +142,10 @@ class SettingsDialog(QDialog):
         self.validate_inputs()
 
     def validate_inputs(self):
-        # Enable "Load Fields" only if URL and Collection valid
         url_valid = self.url_input.hasAcceptableInput()
         collection_selected = bool(self.collection_dropdown.currentText())
         self.btn_refresh_fields.setEnabled(url_valid and collection_selected)
+        self.btn_refresh_collections.setEnabled(url_valid)
 
     def load_collections(self):
         self.collection_dropdown.clear()
@@ -151,11 +160,16 @@ class SettingsDialog(QDialog):
             resp = requests.get(f"{url.rstrip('/')}/collections", headers=headers, timeout=10)
             resp.raise_for_status()
             collections = resp.json().get('data', [])
-            # Filter out system tables starting with 'directus_'
             user_collections = [c for c in collections if not c['collection'].startswith('directus_')]
             for c in user_collections:
                 self.collection_dropdown.addItem(c['collection'])
             self.coll_status_label.setText(f"Loaded {len(user_collections)} collections")
+
+            # Clear fields and statuses when collections reload
+            self.fields_list.clear()
+            self.geom_field_dropdown.clear()
+            self.fields_status_label.setText("")
+
         except Exception as e:
             self.coll_status_label.setText(f"Failed to load collections")
             print(f"Failed to load collections: {e}")
@@ -176,7 +190,6 @@ class SettingsDialog(QDialog):
             resp.raise_for_status()
             fields = resp.json().get('data', [])
 
-            # Populate fields checklist
             for f in fields:
                 field_name = f['field']
                 item = QListWidgetItem(field_name)
@@ -187,13 +200,15 @@ class SettingsDialog(QDialog):
                     item.setCheckState(Qt.Unchecked)
                 self.fields_list.addItem(item)
 
-            # Populate geometry field dropdown
             for f in fields:
                 self.geom_field_dropdown.addItem(f['field'])
-            # Select previous geometry field if exists
+
             idx = self.geom_field_dropdown.findText(self.geom_field)
             if idx >= 0:
                 self.geom_field_dropdown.setCurrentIndex(idx)
+            elif self.geom_field_dropdown.count() > 0:
+                self.geom_field_dropdown.setCurrentIndex(0)
+
             self.fields_status_label.setText(f"Loaded {len(fields)} fields")
 
         except Exception as e:
@@ -207,3 +222,13 @@ class SettingsDialog(QDialog):
             if item.checkState() == Qt.Checked:
                 selected.append(item.text())
         return json.dumps(selected)
+
+    def select_all_fields(self):
+        for i in range(self.fields_list.count()):
+            item = self.fields_list.item(i)
+            item.setCheckState(Qt.Checked)
+
+    def deselect_all_fields(self):
+        for i in range(self.fields_list.count()):
+            item = self.fields_list.item(i)
+            item.setCheckState(Qt.Unchecked)
