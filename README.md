@@ -16,7 +16,6 @@
 - [Author](#author)  
 
 ---
----
 
 ## Overview
 
