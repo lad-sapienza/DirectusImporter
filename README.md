@@ -37,7 +37,7 @@ LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-s
 
 ## Installation
 
-1. Download the latest release ZIP file from the [GitHub repository](https://github.com/yourname/LADirectus2QGIS/releases).  
+1. Download the latest release ZIP file from the [GitHub repository](https://github.com/lad-sapienza/LADirectus2QGIS/releases).  
 2. In QGIS, go to **Plugins > Manage and Install Plugins > Install from ZIP**.  
 3. Select the downloaded ZIP and install.  
 4. Enable the plugin via the Plugins panel.
@@ -75,7 +75,7 @@ LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-s
 
 ## Contributing
 
-Contributions and bug reports are welcome! Please open issues or pull requests on the [GitHub repo](https://github.com/yourname/LADirectus2QGIS).
+Contributions and bug reports are welcome! Please open issues or pull requests on the [GitHub repo](https://github.com/lad-sapienza/LADirectus2QGIS).
 
 ---
 
