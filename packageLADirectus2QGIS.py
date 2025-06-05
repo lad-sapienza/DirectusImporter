@@ -1,10 +1,11 @@
 import os
 import zipfile
+import re
 
 PLUGIN_FOLDER = 'LADirectus2QGIS'
-OUTPUT_ZIP = f'{PLUGIN_FOLDER}.zip'
+VERSION = 'unknown'
+OUTPUT_ZIP = None
 
-# Files and folders to exclude
 EXCLUDE = {
     '.DS_Store',
     '__pycache__',
@@ -29,15 +30,32 @@ def should_include(file_path):
                 return False
     return True
 
+def read_version_from_metadata():
+    metadata_path = os.path.join(PLUGIN_FOLDER, 'metadata.txt')
+    version_pattern = re.compile(r'^version\s*=\s*(.+)$', re.IGNORECASE)
+    if not os.path.isfile(metadata_path):
+        print("⚠️ metadata.txt not found, using unknown version")
+        return 'unknown'
+    with open(metadata_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            match = version_pattern.match(line.strip())
+            if match:
+                return match.group(1).strip()
+    print("⚠️ Version not found in metadata.txt, using unknown version")
+    return 'unknown'
+
 def package_plugin():
+    global VERSION, OUTPUT_ZIP
     if not os.path.isdir(PLUGIN_FOLDER):
         print(f"❌ Folder '{PLUGIN_FOLDER}' not found.")
         return
 
-    print(f"📦 Packaging plugin: {PLUGIN_FOLDER}")
+    VERSION = read_version_from_metadata()
+    OUTPUT_ZIP = f"{PLUGIN_FOLDER}_{VERSION}.zip"
+
+    print(f"📦 Packaging plugin: {PLUGIN_FOLDER} (version {VERSION})")
     with zipfile.ZipFile(OUTPUT_ZIP, 'w', zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(PLUGIN_FOLDER):
-            # Remove excluded directories from walk
             dirs[:] = [d for d in dirs if should_include(os.path.join(root, d))]
             for file in files:
                 full_path = os.path.join(root, file)
