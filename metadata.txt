@@ -1,0 +1,17 @@
+[general]
+name=LADirectus2QGIS
+qgisMinimumVersion=3.0
+description=Fetch geospatial and text data from a Directus API into QGIS, by LAD
+version=0.1
+author=Julian Bogdani
+email=julian.bogdani@uniroma1.it
+homepage=https://github.com/yourname/LADirectus2QGIS
+tags=directus, importer, api, geojson, qgis, ladigital
+experimental=False
+
+[files]
+icon=icon.png
+
+[about]
+LADirectus2QGIS connects QGIS with a Directus instance to import spatial and non-spatial data.
+Features include geometry field recognition, field filtering, caching, and plugin reloading.
