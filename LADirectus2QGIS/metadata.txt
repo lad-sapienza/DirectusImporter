@@ -9,6 +9,4 @@ homepage=https://github.com/lad-sapienza/LADirectus2QGIS
 tags=directus, importer, api, geojson, qgis, LAD
 experimental=False
 icon=icon.png
-
-[about]
-LADirectus2QGIS connects QGIS with a Directus instance to import spatial and non-spatial data. Features include geometry field recognition, field filtering, caching, and plugin reloading.
+about=LADirectus2QGIS connects QGIS with a Directus instance to import spatial and non-spatial data. Features include geometry field recognition, field filtering, caching, and plugin reloading.
