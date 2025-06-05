@@ -52,9 +52,10 @@ def package_plugin():
 
     VERSION = read_version_from_metadata()
     OUTPUT_ZIP = f"{PLUGIN_FOLDER}_{VERSION}.zip"
+    output_path = os.path.join(os.getcwd(), OUTPUT_ZIP)
 
     print(f"📦 Packaging plugin: {PLUGIN_FOLDER} (version {VERSION})")
-    with zipfile.ZipFile(OUTPUT_ZIP, 'w', zipfile.ZIP_DEFLATED) as zf:
+    with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zf:
         for root, dirs, files in os.walk(PLUGIN_FOLDER):
             dirs[:] = [d for d in dirs if should_include(os.path.join(root, d))]
             for file in files:
@@ -62,7 +63,7 @@ def package_plugin():
                 rel_path = os.path.relpath(full_path, os.path.dirname(PLUGIN_FOLDER))
                 if should_include(rel_path):
                     zf.write(full_path, rel_path)
-    print(f"✅ Plugin packaged as {OUTPUT_ZIP}")
+    print(f"✅ Plugin packaged as {output_path}")
 
 if __name__ == '__main__':
     package_plugin()
