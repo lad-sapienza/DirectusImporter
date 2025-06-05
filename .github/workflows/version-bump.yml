@@ -19,19 +19,22 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: Bump patch version in metadata.txt
-        id: bump_version
+      - name: Bump version in metadata.txt
+        env:
+          BUMP_TYPE: ${{ github.event.inputs.bump_type || 'patch' }}
         run: |
+          python - <<'EOF'
           import re
           import sys
+          import os
 
+          bump_type = os.getenv('BUMP_TYPE', 'patch').lower()
           metadata_file = 'LADirectus2QGIS/metadata.txt'
 
           with open(metadata_file, 'r', encoding='utf-8') as f:
               lines = f.readlines()
 
           version_re = re.compile(r'^(version\s*=\s*)(\d+)\.(\d+)\.(\d+)(.*)$')
-
           new_lines = []
           new_version = None
 
@@ -39,7 +42,17 @@ jobs:
               m = version_re.match(line)
               if m:
                   major, minor, patch = int(m.group(2)), int(m.group(3)), int(m.group(4))
-                  patch += 1
+
+                  if bump_type == 'major':
+                      major += 1
+                      minor = 0
+                      patch = 0
+                  elif bump_type == 'minor':
+                      minor += 1
+                      patch = 0
+                  else:
+                      patch += 1
+
                   new_version = f"{major}.{minor}.{patch}"
                   new_line = f"{m.group(1)}{new_version}{m.group(5)}\n"
                   new_lines.append(new_line)
@@ -54,6 +67,7 @@ jobs:
               f.writelines(new_lines)
 
           print(f"::set-output name=new_version::{new_version}")
+          EOF
 
       - name: Commit bumped version
         run: |
