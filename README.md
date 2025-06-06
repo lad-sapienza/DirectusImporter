@@ -85,8 +85,9 @@ GNU GPL 3 — see [LICENSE](LICENSE) file.
 
 ---
 
-## Author
+## Authors
 
-Julian Bogdani — julian.bogdani@uniroma1.it
+- Julian Bogdani — julian.bogdani@uniroma1.it
+- OpenAI's ChatGPT — https://chatgpt.com/
 
 ---
