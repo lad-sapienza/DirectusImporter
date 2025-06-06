@@ -1,4 +1,4 @@
-# LADirectus2QGIS
+# DirectusImporter
 
 **Fetch geospatial and text data from a Directus API into QGIS**
 
@@ -19,7 +19,7 @@
 
 ## Overview
 
-LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-spatial data from a Directus headless CMS instance into QGIS. It supports geometry field detection, selective field import, data caching, and plugin reload functionality to enhance your GIS workflows.
+DirectusImporter is a QGIS plugin designed to seamlessly import spatial and non-spatial data from a Directus headless CMS instance into QGIS. It supports geometry field detection, selective field import, data caching, and plugin reload functionality to enhance your GIS workflows.
 
 ---
 
@@ -37,7 +37,7 @@ LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-s
 
 ## Installation
 
-1. Download the latest release ZIP file from the [GitHub repository](https://github.com/lad-sapienza/LADirectus2QGIS/releases).  
+1. Download the latest release ZIP file from the [GitHub repository](https://github.com/lad-sapienza/DirectusImporter/releases).  
 2. In QGIS, go to **Plugins > Manage and Install Plugins > Install from ZIP**.  
 3. Select the downloaded ZIP and install.  
 4. Enable the plugin via the Plugins panel.
@@ -46,7 +46,7 @@ LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-s
 
 ## Usage
 
-1. Open QGIS and click **Plugins > LADirectus2QGIS > Settings**.  
+1. Open QGIS and click **Plugins > DirectusImporter > Settings**.  
 2. Enter your Directus API URL and authentication token (if required).  
 3. Click **Load Collections** to fetch available tables.  
 4. Select the collection to import.  
@@ -75,7 +75,7 @@ LADirectus2QGIS is a QGIS plugin designed to seamlessly import spatial and non-s
 
 ## Contributing
 
-Contributions and bug reports are welcome! Please open issues or pull requests on the [GitHub repo](https://github.com/lad-sapienza/LADirectus2QGIS).
+Contributions and bug reports are welcome! Please open issues or pull requests on the [GitHub repo](https://github.com/lad-sapienza/DirectusImporter).
 
 ---
 

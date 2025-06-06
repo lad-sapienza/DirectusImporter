@@ -1,4 +1,4 @@
-name: Release LADirectus2QGIS
+name: Release DirectusImporter
 
 on:
   push:
@@ -24,11 +24,11 @@ jobs:
           pip install requests
 
       - name: Package plugin
-        run: python packageLADirectus2QGIS.py
+        run: python packagePlugin.py
 
       - name: Create GitHub Release and upload ZIP
         uses: softprops/action-gh-release@v1
         with:
-          files: 'LADirectus2QGIS_*.zip'
+          files: 'DirectusImporter_*.zip'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

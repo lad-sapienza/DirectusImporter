@@ -2,7 +2,7 @@ import os
 import zipfile
 import re
 
-PLUGIN_FOLDER = 'LADirectus2QGIS'
+PLUGIN_FOLDER = 'DirectusImporter'
 VERSION = 'unknown'
 OUTPUT_ZIP = None
 

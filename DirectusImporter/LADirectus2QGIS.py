@@ -31,7 +31,7 @@ def geojson_to_wkt(geojson_dict):
     return None
 
 
-class LADirectus2QGIS:
+class DirectusImporter:
     def __init__(self, iface):
         self.debug_mode = False  # Set to False to hide Reload Plugin in production
         self.iface = iface
@@ -40,11 +40,11 @@ class LADirectus2QGIS:
         self.cache_timeout_seconds = 3600  # 1 hour
 
         self.settings = QSettings()
-        self.instance_url = self.settings.value("LADirectus2QGIS/instance_url", "")
-        self.collection = self.settings.value("LADirectus2QGIS/collection", "")
-        self.token = self.settings.value("LADirectus2QGIS/token", "")
-        self.geom_field = self.settings.value("LADirectus2QGIS/geom_field", "geometry")
-        self.selected_fields_json = self.settings.value("LADirectus2QGIS/selected_fields", "[]")
+        self.instance_url = self.settings.value("DirectusImporter/instance_url", "")
+        self.collection = self.settings.value("DirectusImporter/collection", "")
+        self.token = self.settings.value("DirectusImporter/token", "")
+        self.geom_field = self.settings.value("DirectusImporter/geom_field", "geometry")
+        self.selected_fields_json = self.settings.value("DirectusImporter/selected_fields", "[]")
 
     def initGui(self):
         self.import_action = QAction("Import from Directus", self.iface.mainWindow())
@@ -53,28 +53,28 @@ class LADirectus2QGIS:
         self.import_action.triggered.connect(self.run)
         self.settings_action.triggered.connect(self.open_settings)
 
-        self.iface.addPluginToMenu("&LADirectus2QGIS", self.import_action)
-        self.iface.addPluginToMenu("&LADirectus2QGIS", self.settings_action)
+        self.iface.addPluginToMenu("&DirectusImporter", self.import_action)
+        self.iface.addPluginToMenu("&DirectusImporter", self.settings_action)
 
         if self.debug_mode:
-            self.reload_action = QAction("Reload LADirectus2QGIS", self.iface.mainWindow())
+            self.reload_action = QAction("Reload DirectusImporter", self.iface.mainWindow())
             self.reload_action.triggered.connect(self.reload_plugin)
-            self.iface.addPluginToMenu("&LADirectus2QGIS", self.reload_action)
+            self.iface.addPluginToMenu("&DirectusImporter", self.reload_action)
 
     def unload(self):
-        self.iface.removePluginMenu("&LADirectus2QGIS", self.import_action)
-        self.iface.removePluginMenu("&LADirectus2QGIS", self.settings_action)
+        self.iface.removePluginMenu("&DirectusImporter", self.import_action)
+        self.iface.removePluginMenu("&DirectusImporter", self.settings_action)
         if self.debug_mode:
-            self.iface.removePluginMenu("&LADirectus2QGIS", self.reload_action)
+            self.iface.removePluginMenu("&DirectusImporter", self.reload_action)
 
     def reload_plugin(self):
         try:
             import importlib
             import sys
             from qgis.utils import plugins, iface
-            from . import LADirectus2QGIS
+            from . import DirectusImporter
 
-            plugin_name = "LADirectus2QGIS"
+            plugin_name = "DirectusImporter"
 
             print("🔁 Reloading plugin manually (QGIS 3.x method)...")
 
@@ -83,13 +83,13 @@ class LADirectus2QGIS:
                 del plugins[plugin_name]
 
             for name in list(sys.modules):
-                if name.startswith("LADirectus2QGIS"):
+                if name.startswith("DirectusImporter"):
                     del sys.modules[name]
 
-            import LADirectus2QGIS
-            importlib.reload(LADirectus2QGIS)
+            import DirectusImporter
+            importlib.reload(DirectusImporter)
 
-            plugin = LADirectus2QGIS.classFactory(iface)
+            plugin = DirectusImporter.classFactory(iface)
             plugin.initGui()
             plugins[plugin_name] = plugin
 
@@ -118,11 +118,11 @@ class LADirectus2QGIS:
           self.geom_field = dlg.geom_field_dropdown.currentText()
           self.selected_fields_json = dlg.get_selected_fields_json()
 
-          self.settings.setValue("LADirectus2QGIS/instance_url", self.instance_url)
-          self.settings.setValue("LADirectus2QGIS/collection", self.collection)
-          self.settings.setValue("LADirectus2QGIS/token", self.token)
-          self.settings.setValue("LADirectus2QGIS/geom_field", self.geom_field)
-          self.settings.setValue("LADirectus2QGIS/selected_fields", self.selected_fields_json)
+          self.settings.setValue("DirectusImporter/instance_url", self.instance_url)
+          self.settings.setValue("DirectusImporter/collection", self.collection)
+          self.settings.setValue("DirectusImporter/token", self.token)
+          self.settings.setValue("DirectusImporter/geom_field", self.geom_field)
+          self.settings.setValue("DirectusImporter/selected_fields", self.selected_fields_json)
 
     def fetch_data(self, force_refresh=False):
       if not self.instance_url or not self.collection:
