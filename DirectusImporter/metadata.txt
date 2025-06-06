@@ -2,7 +2,7 @@
 name=DirectusImporter
 qgisMinimumVersion=3.10.0
 description=Fetch geospatial and text data from a Directus API into QGIS, by LAD
-version=1.0.0
+version=1.1.0
 author=Julian Bogdani
 email=julian.bogdani@uniroma1.it
 homepage=https://github.com/lad-sapienza/DirectusImporter

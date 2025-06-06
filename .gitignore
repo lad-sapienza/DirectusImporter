@@ -1,3 +1,5 @@
+DirectusImporter/.directus_cache.json
+DirectusImporter/api_debug_dump.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

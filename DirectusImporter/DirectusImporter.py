@@ -4,6 +4,7 @@ import os
 import json
 import time
 import requests
+from PyQt5.QtGui import QIcon
 
 from osgeo import ogr  # for GeoJSON to WKT conversion
 
@@ -16,6 +17,7 @@ from qgis.core import (
     QgsFeature,
     QgsGeometry,
     QgsWkbTypes,
+    QgsApplication,
 )
 
 from .settings_dialog import SettingsDialog
@@ -47,8 +49,19 @@ class DirectusImporter:
         self.selected_fields_json = self.settings.value("DirectusImporter/selected_fields", "[]")
 
     def initGui(self):
-        self.import_action = QAction("Import from Directus", self.iface.mainWindow())
-        self.settings_action = QAction("Settings", self.iface.mainWindow())
+        icon_path = os.path.join(self.plugin_dir, "icons")
+
+        import_icon = QIcon(os.path.join(icon_path, "import.svg"))
+        settings_icon = QIcon(os.path.join(icon_path, "settings.svg"))
+        reload_icon = QIcon(os.path.join(icon_path, "reload.svg"))
+
+        self.import_action = QAction(import_icon, "Import from Directus", self.iface.mainWindow())
+        self.settings_action = QAction(settings_icon, "Settings", self.iface.mainWindow())
+
+        self.toolbar = self.iface.addToolBar("DirectusImporter")
+        self.toolbar.setObjectName("DirectusImporter")
+
+        self.settings_action = QAction(settings_icon, "Settings", self.iface.mainWindow())
 
         self.import_action.triggered.connect(self.run)
         self.settings_action.triggered.connect(self.open_settings)
@@ -56,10 +69,14 @@ class DirectusImporter:
         self.iface.addPluginToMenu("&DirectusImporter", self.import_action)
         self.iface.addPluginToMenu("&DirectusImporter", self.settings_action)
 
+        self.toolbar.addAction(self.import_action)
+        self.toolbar.addAction(self.settings_action)
+
         if self.debug_mode:
-            self.reload_action = QAction("Reload DirectusImporter", self.iface.mainWindow())
+            self.reload_action = QAction(reload_icon, "Reload Plugin", self.iface.mainWindow())
             self.reload_action.triggered.connect(self.reload_plugin)
             self.iface.addPluginToMenu("&DirectusImporter", self.reload_action)
+            self.toolbar.addAction(self.reload_action)
 
     def unload(self):
         self.iface.removePluginMenu("&DirectusImporter", self.import_action)
