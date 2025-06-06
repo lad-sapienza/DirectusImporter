@@ -35,7 +35,7 @@ def geojson_to_wkt(geojson_dict):
 
 class DirectusImporter:
     def __init__(self, iface):
-        self.debug_mode = False  # Set to False to hide Reload Plugin in production
+        self.debug_mode = True  # Set to False to hide Reload Plugin in production
         self.iface = iface
         self.plugin_dir = os.path.dirname(__file__)
         self.cache_path = os.path.join(self.plugin_dir, ".directus_cache.json")
